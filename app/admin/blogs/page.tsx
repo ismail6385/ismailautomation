@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PenTool, FolderPlus, FileText, Save, Eye, TrendingUp, CheckCircle, XCircle } from 'lucide-react';
 
 export default function AdminPage() {
@@ -16,6 +16,26 @@ export default function AdminPage() {
         slug: '',
         focusKeyword: '',
     });
+
+    const [allPosts, setAllPosts] = useState<any[]>([]);
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+        const savedPosts = JSON.parse(localStorage.getItem('blogs') || '[]');
+        setAllPosts(savedPosts);
+
+        // Load categories as well if needed, but existing code uses state initializer which is fine for build 
+        // as long as it doesn't touch localStorage. 
+        // Wait! existing categories state uses static array. 
+        // But handleAddCategory attempts to read/write localStorage? 
+        // Let's check handleAddCategory later.
+
+        const savedCategories = JSON.parse(localStorage.getItem('categories') || 'null');
+        if (savedCategories) {
+            setCategories(savedCategories);
+        }
+    }, []);
 
     const [seoScore, setSeoScore] = useState(0);
     const [seoSuggestions, setSeoSuggestions] = useState<string[]>([]);
@@ -870,16 +890,12 @@ export default function AdminPage() {
                     <div className="glass-effect rounded-3xl p-8">
                         <h2 className="text-2xl font-bold text-white mb-6">All Blog Posts</h2>
                         <div className="space-y-4">
-                            {(() => {
-                                const blogs = JSON.parse(localStorage.getItem('blogs') || '[]');
-                                if (blogs.length === 0) {
-                                    return (
-                                        <p className="text-gray-400 text-center py-8">
-                                            No blog posts yet. Create your first one! 📝
-                                        </p>
-                                    );
-                                }
-                                return blogs.map((blog: any, index: number) => (
+                            {allPosts.length === 0 ? (
+                                <p className="text-gray-400 text-center py-8">
+                                    No blog posts yet. Create your first one! 📝
+                                </p>
+                            ) : (
+                                allPosts.map((blog: any, index: number) => (
                                     <div key={index} className="glass-effect rounded-xl p-6 hover-lift">
                                         <div className="flex justify-between items-start mb-2">
                                             <h3 className="text-xl font-bold text-white">{blog.title}</h3>
@@ -900,8 +916,8 @@ export default function AdminPage() {
                                             </a>
                                         </div>
                                     </div>
-                                ));
-                            })()}
+                                ))
+                            )}
                         </div>
                     </div>
                 )}
@@ -915,7 +931,7 @@ export default function AdminPage() {
 
                             <div className="space-y-4">
                                 {(() => {
-                                    const blogs = JSON.parse(localStorage.getItem('blogs') || '[]');
+                                    const blogs = allPosts;
                                     const blogCount = blogs.length;
 
                                     const checklist = [

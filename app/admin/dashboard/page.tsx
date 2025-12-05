@@ -10,8 +10,12 @@ export default function DashboardPage() {
         totalUsers: 0,
         views: 0,
     });
+    const [recentBlogs, setRecentBlogs] = useState<any[]>([]);
+    const [recentTools, setRecentTools] = useState<any[]>([]);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
+        setIsMounted(true);
         // Load stats from localStorage
         const blogs = JSON.parse(localStorage.getItem('blogs') || '[]');
         const tools = JSON.parse(localStorage.getItem('tools') || '[]');
@@ -22,6 +26,8 @@ export default function DashboardPage() {
             totalUsers: 0, // Placeholder
             views: 0, // Placeholder
         });
+        setRecentBlogs(blogs);
+        setRecentTools(tools);
     }, []);
 
     const statCards = [
@@ -54,6 +60,10 @@ export default function DashboardPage() {
             bgColor: 'bg-orange-500/10',
         },
     ];
+
+    if (!isMounted) {
+        return null; // or loading skeleton
+    }
 
     return (
         <div>
@@ -98,16 +108,12 @@ export default function DashboardPage() {
                         </a>
                     </div>
                     <div className="space-y-4">
-                        {(() => {
-                            const blogs = JSON.parse(localStorage.getItem('blogs') || '[]');
-                            if (blogs.length === 0) {
-                                return (
-                                    <p className="text-gray-400 text-center py-8">
-                                        No blogs yet. Create your first one! 📝
-                                    </p>
-                                );
-                            }
-                            return blogs.slice(0, 5).map((blog: any, index: number) => (
+                        {recentBlogs.length === 0 ? (
+                            <p className="text-gray-400 text-center py-8">
+                                No blogs yet. Create your first one! 📝
+                            </p>
+                        ) : (
+                            recentBlogs.slice(0, 5).map((blog: any, index: number) => (
                                 <div
                                     key={index}
                                     className="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
@@ -124,8 +130,8 @@ export default function DashboardPage() {
                                         </div>
                                     </div>
                                 </div>
-                            ));
-                        })()}
+                            ))
+                        )}
                     </div>
                 </div>
 
@@ -138,16 +144,12 @@ export default function DashboardPage() {
                         </a>
                     </div>
                     <div className="space-y-4">
-                        {(() => {
-                            const tools = JSON.parse(localStorage.getItem('tools') || '[]');
-                            if (tools.length === 0) {
-                                return (
-                                    <p className="text-gray-400 text-center py-8">
-                                        No tools yet. Add your first one! 🛠️
-                                    </p>
-                                );
-                            }
-                            return tools.slice(0, 5).map((tool: any, index: number) => (
+                        {recentTools.length === 0 ? (
+                            <p className="text-gray-400 text-center py-8">
+                                No tools yet. Add your first one! 🛠️
+                            </p>
+                        ) : (
+                            recentTools.slice(0, 5).map((tool: any, index: number) => (
                                 <div
                                     key={index}
                                     className="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
@@ -165,8 +167,8 @@ export default function DashboardPage() {
                                         </div>
                                     </div>
                                 </div>
-                            ));
-                        })()}
+                            ))
+                        )}
                     </div>
                 </div>
             </div>

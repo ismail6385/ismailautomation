@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Download, Upload, Database, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
 
 export default function BackupPage() {
@@ -8,7 +8,23 @@ export default function BackupPage() {
     const [restoreStatus, setRestoreStatus] = useState<'idle' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
 
+    const [dashboardData, setDashboardData] = useState({
+        blogs: [],
+        tools: [],
+        subscribers: [],
+        comments: [],
+        media: [],
+        categories: [],
+        siteSettings: {},
+    });
+    const [totalItems, setTotalItems] = useState(0);
+
     const getAllData = () => {
+        // Ensure this only runs on client
+        if (typeof window === 'undefined') return {
+            blogs: [], tools: [], subscribers: [], comments: [], media: [], categories: [], siteSettings: {}
+        };
+
         return {
             blogs: JSON.parse(localStorage.getItem('blogs') || '[]'),
             tools: JSON.parse(localStorage.getItem('tools') || '[]'),
@@ -19,6 +35,17 @@ export default function BackupPage() {
             siteSettings: JSON.parse(localStorage.getItem('siteSettings') || '{}'),
         };
     };
+
+    useEffect(() => {
+        const data = getAllData();
+        setDashboardData(data);
+
+        const total = Object.values(data).reduce((acc: number, val: any) => {
+            if (Array.isArray(val)) return acc + val.length;
+            return acc;
+        }, 0);
+        setTotalItems(total);
+    }, []);
 
     const handleBackup = () => {
         try {
@@ -101,12 +128,6 @@ export default function BackupPage() {
         }
     };
 
-    const data = getAllData();
-    const totalItems = Object.values(data).reduce((acc: number, val: any) => {
-        if (Array.isArray(val)) return acc + val.length;
-        return acc;
-    }, 0);
-
     return (
         <div>
             {/* Header */}
@@ -123,23 +144,23 @@ export default function BackupPage() {
                 </div>
                 <div className="glass-effect rounded-xl p-4">
                     <p className="text-gray-400 text-sm mb-1">Blogs</p>
-                    <p className="text-2xl font-bold text-cyan-400">{data.blogs.length}</p>
+                    <p className="text-2xl font-bold text-cyan-400">{dashboardData.blogs.length}</p>
                 </div>
                 <div className="glass-effect rounded-xl p-4">
                     <p className="text-gray-400 text-sm mb-1">Tools</p>
-                    <p className="text-2xl font-bold text-purple-400">{data.tools.length}</p>
+                    <p className="text-2xl font-bold text-purple-400">{dashboardData.tools.length}</p>
                 </div>
                 <div className="glass-effect rounded-xl p-4">
                     <p className="text-gray-400 text-sm mb-1">Subscribers</p>
-                    <p className="text-2xl font-bold text-green-400">{data.subscribers.length}</p>
+                    <p className="text-2xl font-bold text-green-400">{dashboardData.subscribers.length}</p>
                 </div>
             </div>
 
             {/* Status Messages */}
             {(backupStatus !== 'idle' || restoreStatus !== 'idle') && (
                 <div className={`mb-6 p-4 rounded-xl ${backupStatus === 'success' || restoreStatus === 'success'
-                        ? 'bg-green-500/10 border border-green-500/20'
-                        : 'bg-red-500/10 border border-red-500/20'
+                    ? 'bg-green-500/10 border border-green-500/20'
+                    : 'bg-red-500/10 border border-red-500/20'
                     }`}>
                     <div className="flex items-center gap-3">
                         {(backupStatus === 'success' || restoreStatus === 'success') ? (

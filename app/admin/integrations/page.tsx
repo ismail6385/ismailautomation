@@ -105,8 +105,8 @@ export default function IntegrationsPage() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={`px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all ${activeTab === tab.id
-                                    ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/30'
-                                    : 'glass-effect text-gray-400 hover:text-white hover:bg-white/10'
+                                ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/30'
+                                : 'glass-effect text-gray-400 hover:text-white hover:bg-white/10'
                                 }`}
                         >
                             <Icon className="w-4 h-4" />

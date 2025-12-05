@@ -22,35 +22,44 @@ export default function HealthCheckPage() {
             const results: HealthCheck[] = [];
 
             // Check localStorage availability
-            try {
-                localStorage.setItem('test', 'test');
-                localStorage.removeItem('test');
+            if (typeof window !== 'undefined') {
+                try {
+                    localStorage.setItem('test', 'test');
+                    localStorage.removeItem('test');
+                    results.push({
+                        name: 'Local Storage',
+                        status: 'healthy',
+                        message: 'Working properly',
+                        icon: Database,
+                    });
+                } catch (e) {
+                    results.push({
+                        name: 'Local Storage',
+                        status: 'error',
+                        message: 'Not available or full',
+                        icon: Database,
+                    });
+                }
+
+                // Check data integrity
+                const blogs = JSON.parse(localStorage.getItem('blogs') || '[]');
+                const tools = JSON.parse(localStorage.getItem('tools') || '[]');
+                const totalData = blogs.length + tools.length;
+
                 results.push({
-                    name: 'Local Storage',
-                    status: 'healthy',
-                    message: 'Working properly',
-                    icon: Database,
+                    name: 'Data Integrity',
+                    status: totalData > 0 ? 'healthy' : 'warning',
+                    message: totalData > 0 ? `${totalData} items stored` : 'No data found',
+                    icon: HardDrive,
                 });
-            } catch (e) {
+            } else {
                 results.push({
                     name: 'Local Storage',
-                    status: 'error',
-                    message: 'Not available or full',
+                    status: 'warning',
+                    message: 'Server Side',
                     icon: Database,
                 });
             }
-
-            // Check data integrity
-            const blogs = JSON.parse(localStorage.getItem('blogs') || '[]');
-            const tools = JSON.parse(localStorage.getItem('tools') || '[]');
-            const totalData = blogs.length + tools.length;
-
-            results.push({
-                name: 'Data Integrity',
-                status: totalData > 0 ? 'healthy' : 'warning',
-                message: totalData > 0 ? `${totalData} items stored` : 'No data found',
-                icon: HardDrive,
-            });
 
             // Check browser API availability
             const hasClipboard = !!navigator.clipboard;
@@ -131,23 +140,23 @@ export default function HealthCheckPage() {
 
             {/* Overall Status */}
             <div className={`glass-effect rounded-2xl p-8 mb-8 ${overallStatus === 'healthy' ? 'border border-green-500/30' :
-                    overallStatus === 'warning' ? 'border border-amber-500/30' :
-                        'border border-red-500/30'
+                overallStatus === 'warning' ? 'border border-amber-500/30' :
+                    'border border-red-500/30'
                 }`}>
                 <div className="flex items-center gap-4">
                     <div className={`p-4 rounded-xl ${overallStatus === 'healthy' ? 'bg-green-500/20' :
-                            overallStatus === 'warning' ? 'bg-amber-500/20' :
-                                'bg-red-500/20'
+                        overallStatus === 'warning' ? 'bg-amber-500/20' :
+                            'bg-red-500/20'
                         }`}>
                         <Shield className={`w-12 h-12 ${overallStatus === 'healthy' ? 'text-green-400' :
-                                overallStatus === 'warning' ? 'text-amber-400' :
-                                    'text-red-400'
+                            overallStatus === 'warning' ? 'text-amber-400' :
+                                'text-red-400'
                             }`} />
                     </div>
                     <div>
                         <h2 className={`text-3xl font-bold ${overallStatus === 'healthy' ? 'text-green-400' :
-                                overallStatus === 'warning' ? 'text-amber-400' :
-                                    'text-red-400'
+                            overallStatus === 'warning' ? 'text-amber-400' :
+                                'text-red-400'
                             }`}>
                             {overallStatus === 'healthy' ? 'System Healthy' :
                                 overallStatus === 'warning' ? 'Minor Issues' :
@@ -182,18 +191,18 @@ export default function HealthCheckPage() {
                         <div
                             key={index}
                             className={`glass-effect rounded-xl p-6 border ${check.status === 'healthy' ? 'border-green-500/20' :
-                                    check.status === 'warning' ? 'border-amber-500/20' :
-                                        'border-red-500/20'
+                                check.status === 'warning' ? 'border-amber-500/20' :
+                                    'border-red-500/20'
                                 }`}
                         >
                             <div className="flex items-center gap-4">
                                 <div className={`p-3 rounded-xl ${check.status === 'healthy' ? 'bg-green-500/20' :
-                                        check.status === 'warning' ? 'bg-amber-500/20' :
-                                            'bg-red-500/20'
+                                    check.status === 'warning' ? 'bg-amber-500/20' :
+                                        'bg-red-500/20'
                                     }`}>
                                     <Icon className={`w-6 h-6 ${check.status === 'healthy' ? 'text-green-400' :
-                                            check.status === 'warning' ? 'text-amber-400' :
-                                                'text-red-400'
+                                        check.status === 'warning' ? 'text-amber-400' :
+                                            'text-red-400'
                                         }`} />
                                 </div>
 
