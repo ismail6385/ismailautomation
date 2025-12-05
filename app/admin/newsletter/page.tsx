@@ -22,7 +22,7 @@ export default function NewsletterPage() {
         const storedSubscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
         if (storedSubscribers.length === 0) {
             // Add sample data
-            const sampleData = [
+            const sampleData: Subscriber[] = [
                 { id: '1', email: 'john@example.com', name: 'John Doe', subscribedDate: '2025-01-15', status: 'active', source: 'Blog Signup' },
                 { id: '2', email: 'jane@example.com', name: 'Jane Smith', subscribedDate: '2025-01-20', status: 'active', source: 'Homepage' },
                 { id: '3', email: 'bob@example.com', subscribedDate: '2025-02-01', status: 'active', source: 'Tools Page' },
@@ -181,8 +181,8 @@ export default function NewsletterPage() {
                                     <td className="p-4 text-gray-400">{subscriber.subscribedDate}</td>
                                     <td className="p-4">
                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${subscriber.status === 'active'
-                                                ? 'bg-green-500/20 text-green-400'
-                                                : 'bg-red-500/20 text-red-400'
+                                            ? 'bg-green-500/20 text-green-400'
+                                            : 'bg-red-500/20 text-red-400'
                                             }`}>
                                             {subscriber.status}
                                         </span>

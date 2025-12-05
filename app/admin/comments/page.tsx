@@ -24,7 +24,7 @@ export default function CommentsPage() {
         const storedComments = JSON.parse(localStorage.getItem('comments') || '[]');
         if (storedComments.length === 0) {
             // Sample data
-            const sampleData = [
+            const sampleData: Comment[] = [
                 {
                     id: '1',
                     author: 'John Doe',
@@ -157,8 +157,8 @@ export default function CommentsPage() {
                                             {comment.likes}
                                         </span>
                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${comment.status === 'approved' ? 'bg-green-500/20 text-green-400' :
-                                                comment.status === 'pending' ? 'bg-amber-500/20 text-amber-400' :
-                                                    'bg-red-500/20 text-red-400'
+                                            comment.status === 'pending' ? 'bg-amber-500/20 text-amber-400' :
+                                                'bg-red-500/20 text-red-400'
                                             }`}>
                                             {comment.status}
                                         </span>

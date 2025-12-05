@@ -535,7 +535,7 @@ export default function AdminPage() {
                                                     onClick={() => {
                                                         const url = prompt('Enter URL:');
                                                         if (url) {
-                                                            const textarea = document.getElementById('blog-content') as HTMLTextAreaArea;
+                                                            const textarea = document.getElementById('blog-content') as HTMLTextAreaElement;
                                                             const start = textarea.selectionStart;
                                                             const end = textarea.selectionEnd;
                                                             const selectedText = textarea.value.substring(start, end) || 'link text';
